@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP 信息查询 API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #161b22;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1, h2 {
+            color: #58a6ff;
+            text-align: center;
+        }
+
+        h3 {
+            color: #8b949e;
+            margin-bottom: 10px;
+        }
+
+        p, pre {
+            color: #b1bac4;
+        }
+
+        pre {
+            background-color: #0d1117;
+            border-left: 4px solid #58a6ff;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background-color: #161b22;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        input, select {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #21262d;
+            color: #c9d1d9;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            background-color: #30363d;
+            box-shadow: 0 0 0 2px #58a6ff;
+        }
+
+        button {
+            padding: 15px;
+            background-color: #58a6ff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #1f6feb;
+        }
+
+        .result {
+            margin-top: 20px;
+            background-color: #21262d;
+            padding: 20px;
+            border-radius: 10px;
+            color: #b1bac4;
+        }
+
+        #resultContent {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IP 信息查询 API</h1>
+
+        <div class="section">
+            <h2>接口文档</h2>
+
+            <h3>1. 查询 ipshudi 数据</h3>
+            <p><code>GET /api/ipshudi/&lt;ip&gt;</code></p>
+            <p>描述：从 ipshudi 获取指定 IP 地址的信息。</p>
+            <pre class="code-block">{
+    'iP地址': '43.74.80.82',
+    '归属地': '新加坡',
+    '运营商': '阿里云',
+    'iP类型': '数据中心'
+}</pre>
+
+            <h3>2. 查询 ip138 数据</h3>
+            <p><code>GET /api/ip138/&lt;ip&gt;</code></p>
+            <p>描述：从 ip138 获取指定 IP 地址的信息。</p>
+            <pre class="code-block">{
+    'ASN归属地': '新加坡',
+    '运营商': '阿里云',
+    'iP类型': '数据中心'
+}</pre>
+            <h3>3. 查询最快 IP 信息</h3>
+            <p><code>GET /api/ip/&lt;ip&gt;</code></p>
+            <p>描述：从多个数据源中查询指定 IP 地址的信息，并返回响应时间最快的数据源的结果。</p>
+        </div>
+
+        <div class="section">
+            <h2>在线体验</h2>
+            <form id="apiForm">
+                <input type="text" id="ipAddress" name="ipAddress" placeholder="请输入 IP 地址" required>
+                <select id="apiChoice" name="apiChoice">
+                    <option value="/api/ipshudi">ipshudi</option>
+                    <option value="/api/ip138">ip138</option>
+                    <option value="/api/ip">最快响应</option>
+                </select>
+                <button type="button" onclick="fetchApiData()">查询</button>
+            </form>
+
+            <div class="result" id="result">
+                <h2>查询结果:</h2>
+                <pre id="resultContent"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fetchApiData() {
+            const ipAddress = document.getElementById('ipAddress').value;
+            const apiChoice = document.getElementById('apiChoice').value;
+
+            if (!ipAddress) {
+                alert('请填写 IP 地址');
+                return;
+            }
+
+            const url = apiChoice + '/' + ipAddress;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('resultContent').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('resultContent').textContent = '查询失败: ' + error.message;
+                });
+        }
+    </script>
+</body>
+</html>
